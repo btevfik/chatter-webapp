@@ -4,11 +4,14 @@ function limitText(limitField, limitCount, limitNum) {
 }
 
 //scroll bottom of the page to see the last comment
-function scrollBottom()
+function afterSubmit()
 {
-var box = document.getElementById("outputBox");
-box.scrollTop = box.scrollHeight; 
+    var box = document.getElementById('outputBox');
+    box.scrollTop = box.scrollHeight; 
+	var mBox = document.getElementById('messageBox');
+	mBox.focus();
+	mBox.value="";
 }
 
 //on window load run this
-window.onload=scrollBottom(); 
+window.onload=afterSubmit(); 

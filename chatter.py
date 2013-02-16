@@ -82,7 +82,7 @@ class Message (webapp2.RequestHandler):
              
        if len(message) != 0:
          greeting.put()
-
+       
        user = users.get_current_user().nickname()
         # Send retrieved chat, back to the client
        push = {'message': message, 'user' : user }

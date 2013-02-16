@@ -34,12 +34,14 @@
 	  };
 
 	  onMessage = function(m) {
-		var user = "baris";
+		var a = JSON.parse(String(m.data));
+		var user = a.user;
+		var message = a.message;
 		$(document).ready(function(){
-		    $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person">'+user+'</span><span class="message"><br>TEST'+count+'</span></p>');
+		    $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+user+':</b></span><span class="message"><br>'+message+'</span></p>');
 		});
 		count++;
-		scrollBottom();
+		afterSubmit();
 	  }
 	
 	  openChannel = function() {
@@ -82,10 +84,10 @@
 		<div class="chatter" id="ChatterDiv">
 				<div>
 					<input id="messageBox" class="inputBox" name="content" type="text" onKeyDown="limitText(this.form.content,this.form.countdown,144);" 
-					onKeyUp="limitText(this.form.content,this.form.countdown,144);" maxlength="144"><br>
+					onKeyUp="limitText(this.form.content,this.form.countdown,144);" maxlength="144" onkeypress="if(event.keyCode==13) {sendChat();}"><br>
 					<p class="count">You have <input readonly type="text" name="countdown" size="2" value="144"> characters left.</p>
 				</div>
-				<div><input id="submitButton" type="submit" class="chatButton" value="Chatter" id="submitButton"></div>
+				<div><input id="submitButton" type="button" class="chatButton" value="Chatter" id="submitButton"></div>
 
 		</div>
 	<!-- Channel script -->
