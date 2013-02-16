@@ -9,6 +9,6 @@ currently:
 
 -client posts the message to server using AJAX
 
-=server pushes the posted message to the user that sent the message.
+-server pushes the posted message to the user that sent the message using the channel
 
 -now it acts same as a guestbook, but without reload.
