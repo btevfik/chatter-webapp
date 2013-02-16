@@ -4,14 +4,20 @@ import urllib
 import webapp2
 import jinja2
 import logging
+import json
 import os
+import re
+from django.utils import simplejson
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import channel
+from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_app
 import uuid
 
 jinja_environment = jinja2.Environment(
                                        loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+token = 0
 
 class Greeting(db.Model):
     """Models an individual Guestbook entry with an author, content, and date."""
@@ -27,6 +33,8 @@ def guestbook_key(guestbook_name=None):
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
+        global token
+
         guestbook_name=self.request.get('guestbook_name')
         greetings_query = Greeting.all().ancestor(
                                                   guestbook_key(guestbook_name)).order('date')
@@ -45,6 +53,7 @@ class MainPage(webapp2.RequestHandler):
             token = channel.create_channel(user.user_id())
         else:
             token = channel.create_channel(str(uuid.uuid4()))
+
         
         template_values = {
             'token' : token,
@@ -52,29 +61,45 @@ class MainPage(webapp2.RequestHandler):
             'url': url,
             'url_linktext': url_linktext,
         }
-        
+
         template = jinja_environment.get_template('index.html')
         self.response.out.write(template.render(template_values))
 
-
-class Guestbook(webapp2.RequestHandler):
+class Message (webapp2.RequestHandler):
+    
     def post(self):
-        # We set the same parent key on the 'Greeting' to ensure each greeting is in
-        # the same entity group. Queries across the single entity group will be
-        # consistent. However, the write rate to a single entity group should
-        # be limited to ~1/second.
-        guestbook_name = self.request.get('guestbook_name')
-        greeting = Greeting(parent=guestbook_key(guestbook_name))
-        
-        if users.get_current_user():
-            greeting.author = users.get_current_user().nickname()
-        
-        greeting.content = self.request.get('content')
-        if len(greeting.content) != 0:
-           greeting.put()
-        self.redirect('/?' + urllib.urlencode({'guestbook_name': guestbook_name}))
+       global token
+       logging.info(token)
+       # Store the chat into database so that it can be loaded back when the page is opened again.
+       guestbook_name = self.request.get('guestbook_name')
+       greeting = Greeting(parent=guestbook_key(guestbook_name))
+       
+       if users.get_current_user():
+         greeting.author = users.get_current_user().nickname()
+                 
+       message = self.request.get('chat')
+       greeting.content = message
+             
+       if len(message) != 0:
+         greeting.put()
 
+       user = users.get_current_user().nickname()
+        # Send retrieved chat, back to the client
+       push = {'message': message, 'user' : user }
+       sendMessage = simplejson.dumps(push)
+       channel.send_message(users.get_current_user().user_id(), sendMessage)
+
+class OpenedPage(webapp2.RequestHandler):
+    def post(self):
+        a=0
+        # updater().send_update()  
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/sign', Guestbook)],
+                               ('/opened', OpenedPage),
+                               ('/post', Message)],
                               debug=True)
+def main():
+  run_wsgi_app(app)
+
+if __name__ == "__main__":
+  main()
