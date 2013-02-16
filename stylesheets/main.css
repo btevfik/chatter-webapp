@@ -1,0 +1,216 @@
+/* Chatter-Now stylesheet*/
+body {
+	text-align: center;
+	font-family: Verdana, Helvetica, sans-serif;
+	background: url('../images/background.jpg');
+}
+.output{
+	top: 0px;
+	bottom: 150px;
+	left: 0;
+	right: 0;
+	margin:0px auto; 
+	width:500px; 
+	padding-right:50px;
+	position: absolute;
+	overflow: auto;
+}
+#login{
+    font-family:Courier New;
+	font-weight:bold;
+	width:70px;
+	right:0;
+	top:0;
+	position:absolute;
+	height:20px;
+	background-color: rgba(204,0,0,0.5);
+	box-shadow: 0px 3px 3px #888;
+	transition: padding-top 1s;
+	-moz-transition: padding-top 1s; /* Firefox 4 */
+	-webkit-transition: padding-top 1s; /* Safari and Chrome */
+	-o-transition: padding-top 1s; /* Opera */	
+}
+#login:hover{
+	padding-top:10px ;
+}
+.logo{
+	position : absolute;
+	bottom : 0;
+	right: 0;
+	margin: 10px;
+	z-index:1;
+}
+a {
+	text-decoration:none;
+}
+a:link{
+	color:#3B5999;
+}
+a:visited{
+	color:#3B5999;
+}
+a:hover{
+	color:#3B5999;
+}
+.bubble{
+	box-shadow: 6px 6px 5px #888;
+	margin-bottom:30px;
+	word-wrap: break-word;
+	padding:20px;
+}
+.message{
+	color:white;
+}
+.person{
+	color:yellow;
+}
+.chatter{
+	bottom: 0;
+    height: 150px;
+    left: 0;
+    right: 0;
+	margin:0px auto; 
+	width:700px;
+    position: absolute;
+}
+.inputBox {
+	margin-top: 20px;
+	margin-bottom: 0px;
+	height:30px;
+	font-size:18px;
+	border:1px solid #3B5998;
+	width:600px;
+}
+.count {
+	font-size:10px;
+}
+
+/* CSS Button from http://www.cssbuttongenerator.com */
+
+.chatButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background-color:#ededed;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	border:1px solid #3b5999;
+	display:inline-block;
+	color:#3b5999;
+	font-family:Courier New;
+	font-size:22px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #ffffff;
+}.chatButton:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+	background-color:#dfdfdf;
+}.chatButton:active {
+	position:relative;
+	top:1px;
+}
+
+/*Pure CSS Speech Bubble from http://nicolasgallagher.com/pure-css-speech-bubbles */
+
+/* THE SPEECH BUBBLE
+------------------------------------------------------------------------------------------------------------------------------- */
+.triangle-isosceles {
+	position:relative;
+	padding:15px;
+	margin:1em 0 3em;
+	color:#000;
+	background:#f3961c; /* default background for browsers without gradient support */
+	/* css3 */
+	background:-webkit-gradient(linear, 0 0, 0 100%, from(#f9d835), to(#f3961c));
+	background:-moz-linear-gradient(#f9d835, #f3961c);
+	background:-o-linear-gradient(#f9d835, #f3961c);
+	background:linear-gradient(#f9d835, #f3961c);
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+}
+
+/* Variant : for top positioned triangle
+------------------------------------------ */
+
+.triangle-isosceles.top {
+	background:-webkit-gradient(linear, 0 0, 0 100%, from(#f3961c), to(#f9d835));
+	background:-moz-linear-gradient(#f3961c, #f9d835);
+	background:-o-linear-gradient(#f3961c, #f9d835);
+	background:linear-gradient(#f3961c, #f9d835);
+}
+
+/* Variant : for left/right positioned triangle
+------------------------------------------ */
+
+.triangle-isosceles.left {
+	margin-left:50px;
+	background:#f3961c;
+}
+
+/* Variant : for right positioned triangle
+------------------------------------------ */
+
+.triangle-isosceles.right {
+	margin-right:50px;
+	background:#f3961c;
+}
+
+/* THE TRIANGLE
+------------------------------------------------------------------------------------------------------------------------------- */
+
+/* creates triangle */
+.triangle-isosceles:after {
+	content:"";
+	position:absolute;
+	bottom:-15px; /* value = - border-top-width - border-bottom-width */
+	left:50px; /* controls horizontal position */
+	border-width:15px 15px 0; /* vary these values to change the angle of the vertex */
+	border-style:solid;
+	border-color:#f3961c transparent;
+    /* reduce the damage in FF3.0 */
+    display:block; 
+    width:0;
+}
+
+/* Variant : top
+------------------------------------------ */
+
+.triangle-isosceles.top:after {
+	top:-15px; /* value = - border-top-width - border-bottom-width */
+	right:50px; /* controls horizontal position */
+	bottom:auto;
+	left:auto;
+	border-width:0 15px 15px; /* vary these values to change the angle of the vertex */
+	border-color:#f3961c transparent;
+}
+
+/* Variant : left
+------------------------------------------ */
+
+.triangle-isosceles.left:after {
+	top:16px; /* controls vertical position */
+	left:-50px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+	border-width:10px 50px 10px 0;
+	border-color:transparent #f3961c;
+}
+
+/* Variant : right
+------------------------------------------ */
+
+.triangle-isosceles.right:after {
+	top:16px; /* controls vertical position */
+	right:-50px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+    left:auto;
+	border-width:10px 0 10px 50px;
+	border-color:transparent #f3961c;
+}
