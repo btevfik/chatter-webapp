@@ -1,6 +1,6 @@
 //update how many characters left
-function limitText(limitField, limitCount, limitNum) {
-		limitCount.value = limitNum - limitField.value.length;
+function limitText(limitNum) {
+		document.getElementById('countdown').value = limitNum - document.getElementById('messageBox').value.length;
 }
 
 //scroll bottom of the page to see the last comment

@@ -1,9 +1,14 @@
 /* Chatter-Now stylesheet*/
+
+/* Main body 
+----------------------------------------------------------------------------------------------------------------------------- */
 body {
 	text-align: center;
 	font-family: Verdana, Helvetica, sans-serif;
 	background: url('../images/background.jpg');
 }
+/* Output that contains the chat 
+----------------------------------------------------------------------------------------------------------------------------- */
 .output{
 	top: 0px;
 	bottom: 150px;
@@ -15,6 +20,9 @@ body {
 	position: absolute;
 	overflow: auto;
 }
+
+/* Login-Logout button 
+----------------------------------------------------------------------------------------------------------------------------- */
 #login{
     font-family:Courier New;
 	font-weight:bold;
@@ -33,6 +41,9 @@ body {
 #login:hover{
 	padding-top:10px ;
 }
+
+/* BT logo 
+----------------------------------------------------------------------------------------------------------------------------- */
 .logo{
 	position : absolute;
 	bottom : 0;
@@ -40,6 +51,9 @@ body {
 	margin: 10px;
 	z-index:1;
 }
+
+/* Links 
+----------------------------------------------------------------------------------------------------------------------------- */
 a {
 	text-decoration:none;
 }
@@ -52,18 +66,34 @@ a:visited{
 a:hover{
 	color:#3B5999;
 }
+/* Container for speech bubble 
+----------------------------------------------------------------------------------------------------------------------------- */
 .bubble{
+	width:250px;
 	box-shadow: 6px 6px 5px #888;
 	margin-bottom:30px;
 	word-wrap: break-word;
 	padding:20px;
 }
+.bubble.moveRight{
+	transform:translate(180px,0px);
+    -ms-transform:translate(180px,0px); /* IE 9 */
+    -moz-transform:translate(180px,0px); /* Firefox */
+    -webkit-transform:translate(180px,0px); /* Safari and Chrome */
+    -o-transform:translate(180px,0px); /* Opera */
+}
+/* Message in the speech bubble 
+----------------------------------------------------------------------------------------------------------------------------- */
 .message{
 	color:white;
 }
+/* Person who sent the message 
+----------------------------------------------------------------------------------------------------------------------------- */
 .person{
 	color:yellow;
 }
+/* Container for input text area and button 
+----------------------------------------------------------------------------------------------------------------------------- */
 .chatter{
 	bottom: 0;
     height: 150px;
@@ -73,6 +103,8 @@ a:hover{
 	width:700px;
     position: absolute;
 }
+/* Input text area 
+----------------------------------------------------------------------------------------------------------------------------- */
 .inputBox {
 	margin-top: 20px;
 	margin-bottom: 0px;
@@ -81,12 +113,14 @@ a:hover{
 	border:1px solid #3B5998;
 	width:600px;
 }
+/* Counter to show number of characters left 
+----------------------------------------------------------------------------------------------------------------------------- */
 .count {
 	font-size:10px;
 }
 
-/* CSS Button from http://www.cssbuttongenerator.com */
-
+/* Chatter Button style from "http://www.cssbuttongenerator.com" 
+----------------------------------------------------------------------------------------------------------------------------- */
 .chatButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -117,8 +151,7 @@ a:hover{
 	top:1px;
 }
 
-/*Pure CSS Speech Bubble from http://nicolasgallagher.com/pure-css-speech-bubbles */
-
+/*Pure CSS Speech Bubble from "http://nicolasgallagher.com/pure-css-speech-bubbles" */
 /* THE SPEECH BUBBLE
 ------------------------------------------------------------------------------------------------------------------------------- */
 .triangle-isosceles {
@@ -137,16 +170,6 @@ a:hover{
 	border-radius:10px;
 }
 
-/* Variant : for top positioned triangle
------------------------------------------- */
-
-.triangle-isosceles.top {
-	background:-webkit-gradient(linear, 0 0, 0 100%, from(#f3961c), to(#f9d835));
-	background:-moz-linear-gradient(#f3961c, #f9d835);
-	background:-o-linear-gradient(#f3961c, #f9d835);
-	background:linear-gradient(#f3961c, #f9d835);
-}
-
 /* Variant : for left/right positioned triangle
 ------------------------------------------ */
 
@@ -160,7 +183,7 @@ a:hover{
 
 .triangle-isosceles.right {
 	margin-right:50px;
-	background:#f3961c;
+	background:#a1bd68;
 }
 
 /* THE TRIANGLE
@@ -178,18 +201,6 @@ a:hover{
     /* reduce the damage in FF3.0 */
     display:block; 
     width:0;
-}
-
-/* Variant : top
------------------------------------------- */
-
-.triangle-isosceles.top:after {
-	top:-15px; /* value = - border-top-width - border-bottom-width */
-	right:50px; /* controls horizontal position */
-	bottom:auto;
-	left:auto;
-	border-width:0 15px 15px; /* vary these values to change the angle of the vertex */
-	border-color:#f3961c transparent;
 }
 
 /* Variant : left

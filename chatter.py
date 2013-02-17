@@ -20,10 +20,11 @@ jinja_environment = jinja2.Environment(
 token = 0
 
 class Greeting(db.Model):
-    """Models an individual Guestbook entry with an author, content, and date."""
+    """Models an individual Guestbook entry with an author, content, date and ip address"""
     author = db.StringProperty()
     content = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
+    ip_address = db.StringProperty()
 
 
 def guestbook_key(guestbook_name=None):
@@ -51,12 +52,15 @@ class MainPage(webapp2.RequestHandler):
         
         if user:
             token = channel.create_channel(user.user_id())
+            nickname = user.nickname()
         else:
             token = channel.create_channel(str(uuid.uuid4()))
+            nickname = "Anonymous"
 
         
         template_values = {
             'token' : token,
+            'me': nickname,
             'greetings': greetings,
             'url': url,
             'url_linktext': url_linktext,
@@ -69,7 +73,6 @@ class Message (webapp2.RequestHandler):
     
     def post(self):
        global token
-       logging.info(token)
        # Store the chat into database so that it can be loaded back when the page is opened again.
        guestbook_name = self.request.get('guestbook_name')
        greeting = Greeting(parent=guestbook_key(guestbook_name))
@@ -79,15 +82,24 @@ class Message (webapp2.RequestHandler):
                  
        message = self.request.get('chat')
        greeting.content = message
+
+       ip = self.request.remote_addr
+       logging.info("IP:"+ip)
+       greeting.ip_address=ip
              
        if len(message) != 0:
-         greeting.put()
+          greeting.put()
        
-       user = users.get_current_user().nickname()
-        # Send retrieved chat, back to the client
-       push = {'message': message, 'user' : user }
-       sendMessage = simplejson.dumps(push)
-       channel.send_message(users.get_current_user().user_id(), sendMessage)
+       if users.get_current_user():
+          nickname = users.get_current_user().nickname()
+       else:
+          nickname = "Anonymous"
+
+       # Send retrieved chat, back to the client
+       if len(message) != 0:
+          push = {'message': message, 'user' : nickname }
+          sendMessage = simplejson.dumps(push)
+          channel.send_message(users.get_current_user().user_id(), sendMessage)
 
 class OpenedPage(webapp2.RequestHandler):
     def post(self):

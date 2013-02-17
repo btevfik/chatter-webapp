@@ -7,12 +7,9 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 </head>
 <body>
-	<script>var state = {
-	    game_key: '{{ game_key }}',
-	    me: '{{ me }}'
-	  };
-	 
-	  var count = 0;
+	<script>
+	
+	  var me = '{{me}}';
 
 	  sendChat = function (){
 		 var input = document.getElementById('messageBox').value;
@@ -38,9 +35,13 @@
 		var user = a.user;
 		var message = a.message;
 		$(document).ready(function(){
-		    $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+user+':</b></span><span class="message"><br>'+message+'</span></p>');
+		   if(me==user){
+		     $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
+		    }
+		   else{
+		     $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+user+':</b></span><span class="message"><br>'+message+'</span></p>');
+		   }
 		});
-		count++;
 		afterSubmit();
 	  }
 	
@@ -60,35 +61,43 @@
 
 	  initialize = function() {
 	    openChannel();
-	    onMessage({data: '{{ initial_message }}'});
 	    var submitButton = document.getElementById('submitButton');
 	    submitButton.onclick = new Function('sendChat()');
-	  }      
+	  }    
+	  
 	  setTimeout(initialize, 100); </script>
+	
 	<div id="login"><a href="{{ url }}">{{ url_linktext }}</a></div>
 	<div class="logo"><a href="http://people.bu.edu/bt" target="_blank"><img src="/images/logo.png"/></a></div>
 	
 		<div class="output" id="outputBox">
-			{% for greeting in greetings %}
-			<p class="triangle-isosceles left bubble"> 
-			<span class="person">
-			{% if greeting.author %}
-			<b>{{ greeting.author }}</b>:
-			{% else %}
-			Anonymous:</span>
-			{% endif %}
-			<span class="message"><br>{{ greeting.content|escape }}</span></p>
-			{% endfor %}
 		</div>
+		
+			{% for greeting in greetings %}
+			  <script type="text/javascript">
+              var author = "{{ greeting.author }}";
+              var message = "{{greeting.content|escape}}";
+             if(author === me){
+              $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
+		         }
+		   else{		
+		    $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+author+':</b></span><span class="message"><br>'+message+'</span></p>');
+               }
+            </script>
+		    <script type="text/javascript">
+		//$(document).ready(function(){
+		  //  $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+'Sneaky Fellow'+':</b></span><span class="message"><br>'+message+'</span></p>');
+		//});   
+		</script>
+			{% endfor %}
 
 		<div class="chatter" id="ChatterDiv">
 				<div>
-					<input id="messageBox" class="inputBox" name="content" type="text" onKeyDown="limitText(this.form.content,this.form.countdown,144);" 
-					onKeyUp="limitText(this.form.content,this.form.countdown,144);" maxlength="144" onkeypress="if(event.keyCode==13) {sendChat();}"><br>
-					<p class="count">You have <input readonly type="text" name="countdown" size="2" value="144"> characters left.</p>
+					<input id="messageBox" class="inputBox" type="text" onKeyDown="limitText(140);" 
+					onKeyUp="limitText(140);" maxlength="140" onkeypress="if(event.keyCode==13) {sendChat();}"><br>
+					<p class="count">You have <input readonly type="text" id="countdown" size="2" value="140"> characters left.</p>
 				</div>
-				<div><input id="submitButton" type="button" class="chatButton" value="Chatter" id="submitButton"></div>
-
+		            <div><input id="submitButton" type="button" class="chatButton" value="Chatter" id="submitButton"></div>
 		</div>
 	<!-- Channel script -->
 		<script type="text/javascript" src="/scripts/channel.js"></script>
