@@ -3,7 +3,7 @@ chatter-webapp
 
 A chat app with Google App Engine
 
-work on progress...
+work in progress...
 
 **Update 1 (Feb 17 2013)**
 
