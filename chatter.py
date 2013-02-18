@@ -26,11 +26,16 @@ class Greeting(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
     ip_address = db.StringProperty()
 
+class ConnectedUser(db.Model):
+    id = db.StringProperty()
+
 
 def guestbook_key(guestbook_name=None):
     """Constructs a Datastore key for a Guestbook entity with guestbook_name."""
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
 
+def connects_key(connects_name=None):
+    return db.Key.from_path('Connects', connects_name or 'default_connects')
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -40,6 +45,10 @@ class MainPage(webapp2.RequestHandler):
         greetings_query = Greeting.all().ancestor(
                                                   guestbook_key(guestbook_name)).order('date')
         greetings = greetings_query.run()
+
+        connects_name=self.request.get('connects_name')
+        connects_query = ConnectedUser.all().ancestor(connects_key(connects_name))
+        connects = connects_query.run()
         
         if users.get_current_user():
             url = users.create_logout_url(self.request.uri)
@@ -76,6 +85,12 @@ class Message (webapp2.RequestHandler):
        # Store the chat into database so that it can be loaded back when the page is opened again.
        guestbook_name = self.request.get('guestbook_name')
        greeting = Greeting(parent=guestbook_key(guestbook_name))
+
+       connects_name = self.request.get('connects_name')
+       connects_query = ConnectedUser.all().ancestor(connects_key(connects_name))
+       connects = connects_query.run()
+
+       user = db.GqlQuery("SELECT * FROM ConnectedUser")
        
        if users.get_current_user():
          greeting.author = users.get_current_user().nickname()
@@ -99,12 +114,33 @@ class Message (webapp2.RequestHandler):
        if len(message) != 0:
           push = {'message': message, 'user' : nickname }
           sendMessage = simplejson.dumps(push)
-          channel.send_message(users.get_current_user().user_id(), sendMessage)
+          for user in connects:
+             logging.info(user.id)
+             channel.send_message(user.id, sendMessage)
 
 class OpenedPage(webapp2.RequestHandler):
     def post(self):
-        a=0
-        # updater().send_update()  
+       connects_name = self.request.get('connects_name')
+       connects_query = ConnectedUser.all().ancestor(connects_key(connects_name))
+       connects = connects_query.run()
+       new_user = ConnectedUser(parent=connects_key(connects_name))
+
+       user = db.GqlQuery("SELECT * FROM ConnectedUser") 
+   
+       new_user.id = users.get_current_user().user_id()
+       
+       if connects_query.count() == 0:
+          new_user.put()
+       
+       found = False
+
+       for user in connects:
+          if user.id==new_user.id:
+             found = True
+             break
+       
+       if found==False:
+          new_user.put() 
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/opened', OpenedPage),
