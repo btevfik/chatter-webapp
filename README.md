@@ -22,7 +22,7 @@ work in progress...
 -no tracking of who is disconnected
 
 -anonymous users can sign it as a guestbook (no chat functionality)
----------------------------------------------------------------------------------------
+
 
 **Initial (Feb 15 2013)**
 
