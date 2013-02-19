@@ -16,11 +16,15 @@ A chat app with Google App Engine - web: http://chatter-now.appspot.com
 -as long as the cookies are not deleted or expire, anonymous users will see their messages with "you:" bubble,
 even if they reload the page.
 
-*possible additions*
+*possible additions:*
 
 -creating private rooms
 
 -be able to delete chat history
+
+*issues/notes:*
+
+-user_id's are currently publicly available and can be a security issue. need to hash and salt the raw values.
 
 
 **Version 1.1 (Feb 17 2013)**
