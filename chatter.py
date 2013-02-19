@@ -21,6 +21,7 @@ jinja_environment = jinja2.Environment(
 class Greeting(db.Model):
     """Models an individual Guestbook entry with an author, content, date and ip address"""
     author = db.StringProperty()
+    id = db.StringProperty()
     content = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
     ip_address = db.StringProperty()
@@ -62,12 +63,14 @@ class MainPage(webapp2.RequestHandler):
             nickname = user.nickname()
             my_id = user.user_id()
         else:
-            my_id = str(uuid.uuid4()).replace("-",'')
+            if self.request.cookies.get('user_id'):
+               my_id = self.request.cookies.get('user_id')
+            else:
+               my_id = str(uuid.uuid4()).replace("-",'')
+               self.response.headers.add_header( 
+                         'Set-Cookie', 'user_id='+my_id+'; expires=31-Dec-2020 23:59:59 GMT')
             token = channel.create_channel(my_id)
-            nickname = "Anonymous"
-
-        self.response.headers.add_header( 
-                         'Set-Cookie', 'user_id='+my_id+'; expires=31-Dec-2020 23:59:59 GMT') 
+            nickname = "Anonymous" 
         
         template_values = {
             'token' : token,
@@ -96,8 +99,10 @@ class Message (webapp2.RequestHandler):
        
        if users.get_current_user():
          greeting.author = users.get_current_user().nickname()
+         greeting.id = users.get_current_user().user_id();
        else: 
          greeting.author = "Anonymous"
+         greeting.id = self.request.cookies.get('user_id')
                  
        message = self.request.get('chat')
        greeting.content = message

@@ -80,7 +80,8 @@
 			  <script type="text/javascript">
               var author = "{{ greeting.author }}";
               var message = "{{greeting.content|escape}}";
-             if(author === me){
+              var author_id = "{{ greeting.id }}";
+             if(author_id === my_id){
               $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
 		       }
 		     else{		
