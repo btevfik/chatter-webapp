@@ -11,6 +11,8 @@ function afterSubmit()
 	var mBox = document.getElementById('messageBox');
 	mBox.focus();
 	mBox.value="";
+	var count = document.getElementById('countdown');
+	count.value = "140";
 }
 
 /* next two jquery handlers achieve the effect of clicking the chatter button when enter is pressed */
