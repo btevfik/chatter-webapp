@@ -1,16 +1,22 @@
+// Copyright (c) Baris Tevfik
+// refer to License.txt
+
 //update how many characters left
 function limitText(limitNum) {
 		document.getElementById('countdown').value = limitNum - document.getElementById('messageBox').value.length;
 }
 
-//scroll bottom of the page to see the last comment
-function afterSubmit()
+//call after load
+function afterLoad()
 {
+	//scroll to the bottom of the page
     var box = document.getElementById('outputBox');
-    box.scrollTop = box.scrollHeight; 
+    box.scrollTop = box.scrollHeight;
+    //focus to the text area and clear it 
 	var mBox = document.getElementById('messageBox');
 	mBox.focus();
 	mBox.value="";
+	//reset the character counter
 	var count = document.getElementById('countdown');
 	count.value = "140";
 }
@@ -33,4 +39,4 @@ $("#messageBox").keyup(function(event){
 });
 
 //on window load run this
-window.onload=afterSubmit(); 
+window.onload=afterLoad(); 

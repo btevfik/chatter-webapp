@@ -1,3 +1,5 @@
+# Copyright (c) Baris Tevfik
+# refer to License.txt
 import cgi
 import datetime
 import urllib
@@ -7,7 +9,6 @@ import logging
 import json
 import os
 import re
-from django.utils import simplejson
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import channel
@@ -18,18 +19,19 @@ import uuid
 jinja_environment = jinja2.Environment(
                                        loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
+#Greeting to hold each chat entry
 class Greeting(db.Model):
-    """Models an individual Guestbook entry with an author, content, date and ip address"""
-    author = db.StringProperty()
-    id = db.StringProperty()
-    content = db.StringProperty(multiline=True)
-    date = db.DateTimeProperty(auto_now_add=True)
-    ip_address = db.StringProperty()
+    author = db.StringProperty() #the author nickname (email or anonymous)
+    id = db.StringProperty() #author id
+    content = db.StringProperty(multiline=True)  #the content
+    date = db.DateTimeProperty(auto_now_add=True) #date of entry
+    ip_address = db.StringProperty() #ip address of the author
 
+#Connected user entry to hold the id of the user
 class ConnectedUser(db.Model):
     id = db.StringProperty()
 
-
+#Keys for entities
 def guestbook_key(guestbook_name=None):
     """Constructs a Datastore key for a Guestbook entity with guestbook_name."""
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
@@ -37,18 +39,19 @@ def guestbook_key(guestbook_name=None):
 def connects_key(connects_name=None):
     return db.Key.from_path('Connects', connects_name or 'default_connects')
 
+#When main page is loaded this function is called first
 class MainPage(webapp2.RequestHandler):
     def get(self):
 
+        #get datastore entities
         guestbook_name=self.request.get('guestbook_name')
-        greetings_query = Greeting.all().ancestor(
-                                                  guestbook_key(guestbook_name)).order('date')
+        greetings_query = Greeting.all().ancestor(guestbook_key(guestbook_name)).order('date')
         greetings = greetings_query.run()
 
         connects_name=self.request.get('connects_name')
         connects_query = ConnectedUser.all().ancestor(connects_key(connects_name))
-        connects = connects_query.run()
         
+        #get login/logout links
         if users.get_current_user():
             url = users.create_logout_url(self.request.uri)
             url_linktext = 'Logout'
@@ -56,22 +59,30 @@ class MainPage(webapp2.RequestHandler):
             url = users.create_login_url(self.request.uri)
             url_linktext = 'Login'
         
+        #get current user
         user = users.get_current_user()
-        
+     
+        #if the user is logged in
         if user:
+            #create a token, get nickname and id
             token = channel.create_channel(user.user_id())
             nickname = user.nickname()
             my_id = user.user_id()
+        #if the user is not logged in (anonymous)
         else:
+            #if the anonymous user has been around before and has an id stored in cookie
             if self.request.cookies.get('user_id'):
                my_id = self.request.cookies.get('user_id')
+            #if not create a cookie
             else:
                my_id = str(uuid.uuid4()).replace("-",'')
                self.response.headers.add_header( 
                          'Set-Cookie', 'user_id='+my_id+'; expires=31-Dec-2020 23:59:59 GMT')
+            #create a token and assign a nickname
             token = channel.create_channel(my_id)
             nickname = "Anonymous" 
         
+        #inject thes values into client
         template_values = {
             'token' : token,
             'me': nickname,
@@ -84,6 +95,7 @@ class MainPage(webapp2.RequestHandler):
         template = jinja_environment.get_template('index.html')
         self.response.out.write(template.render(template_values))
 
+#A message is received
 class Message (webapp2.RequestHandler):
     
     def post(self):
@@ -113,23 +125,26 @@ class Message (webapp2.RequestHandler):
        if len(message) != 0:
           greeting.put()
        
+       ###########################################################
+
+       # Send the received message to all users stored in connected users database
        if users.get_current_user():
           nickname = users.get_current_user().nickname()
           my_id = users.get_current_user().user_id()
        else:
           nickname = "Anonymous"
           my_id = self.request.cookies.get('user_id')
-       
-       # Send retrieved chat, back to all clients
+      
        if len(message) != 0:
           push = {'message': message, 'user' : nickname, 'my_id' : my_id }
-          sendMessage = simplejson.dumps(push)
+          sendMessage = json.dumps(push)
           for user in connects:
                channel.send_message(user.id, sendMessage)
 
+#A channel is opened by a client
 class OpenedPage(webapp2.RequestHandler):
     def post(self):
-	
+
        connects_name = self.request.get('connects_name')
        connects_query = ConnectedUser.all().ancestor(connects_key(connects_name))
        connects = connects_query.run()
@@ -137,11 +152,14 @@ class OpenedPage(webapp2.RequestHandler):
 
        user = db.GqlQuery("SELECT * FROM ConnectedUser") 
    
+       # if there the user is logged in
        if(users.get_current_user()):
            new_user.id = users.get_current_user().user_id()
+       #if the user is anonymous then the id is stored in a cookie when MainPage is called, retreive that
        else:
            new_user.id = self.request.cookies.get('user_id')
 
+       #Put the user id into connected users database if it doesn't exist already
        if connects_query.count() == 0:
           new_user.put()
        

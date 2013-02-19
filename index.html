@@ -1,4 +1,6 @@
 <html>
+<!-- Copyright (c) Baris Tevfik
+  refer to License.txt -->
 <head>
 	<title>Chatter</title>
 	<link rel="shortcut icon" href="favicon.ico" />
@@ -7,16 +9,18 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 </head>
 <body>
+	<!-- Script that handles sending/receiving messages to/from a server -->
 	<script>
-	
 	  var me = '{{me}}';
 	  var my_id = '{{my_id}}';
 
+      //Send a chat message to server
 	  sendChat = function (){
 		 var input = document.getElementById('messageBox').value;
 		 sendMessage('/post', input);
 	  }
 
+      //Send a message using AJAX
 	  sendMessage = function(path, param) {
 		if (param)
 		{
@@ -27,26 +31,33 @@
 	    xhr.send();
 	  };
 
+      //If channel is opened, send an opened message to server
 	  onOpened = function() {
 	    sendMessage('/opened');
 	  };
 
+      //If a message is received from the server
 	  onMessage = function(m) {
+		//Parse the message
 		var a = JSON.parse(String(m.data));
 		var user = a.user;
 		var message = a.message;
 		var user_id = a.my_id;
 		$(document).ready(function(){
+		   //If this is my message, display it with green right bubble
 		   if(user_id===my_id){
 		     $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
 		    }
+		   //if someone else's message than display as orange left bubble
 		   else{
 		     $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+user+':</b></span><span class="message"><br>'+message+'</span></p>');
 		   }
 		});
-		afterSubmit();
+		//call this function to perform after load tasks (look at script.js)
+		afterLoad();
 	  }
 	
+	  //Open a channel using the token injected into client from the server
 	  openChannel = function() {
 	    var token = '{{ token }}';
 	    var channel = new goog.appengine.Channel(token);
@@ -61,29 +72,40 @@
 	    socket.onmessage = onMessage;
 	  }
 
+      //Initialize
 	  initialize = function() {
+		//open channel
 	    openChannel();
+	    //set function handler for submit button click event
 	    var submitButton = document.getElementById('submitButton');
 	    submitButton.onclick = new Function('sendChat()');
 	  }    
 	  
-	  setTimeout(initialize, 100); </script>
+	  //Call initialize in page load
+	  setTimeout(initialize, 100); 
+	</script>
 	
+	<!-- user address display on top right -->
 	<div id="loginAddr">{{me}}</div>
+	<!-- login/logout link-->
 	<div id="login"><a href="{{ url }}">{{ url_linktext }}</a></div>
+	<!-- logo displayed on bottom right -->
 	<div class="logo"><a href="http://people.bu.edu/bt" target="_blank"><img src="/images/logo.png"/></a></div>
 	
+	    <!-- the container that holds chat -->
 		<div class="output" id="outputBox">
 		</div>
-		
+		    <!-- load the old chat history from database -->
 			{% for greeting in greetings %}
 			  <script type="text/javascript">
               var author = "{{ greeting.author }}";
               var message = "{{greeting.content|escape}}";
               var author_id = "{{ greeting.id }}";
+             //if this is my message display as green
              if(author_id === my_id){
               $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
 		       }
+		     //if someone else's display as orange
 		     else{		
 		     $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+author+':</b></span><span class="message"><br>'+message+'</span></p>');
                }
@@ -92,16 +114,18 @@
 		</script>
 			{% endfor %}
 
+        <!-- container for input text area and button -->
 		<div class="chatter" id="ChatterDiv">
 				<div>
+					<!-- text area-->
 					<input id="messageBox" class="inputBox" type="text" onKeyDown="limitText(140);" 
 					onKeyUp="limitText(140);" maxlength="140"><br>
+					<!-- counter -->
 					<p class="count">You have <input readonly type="text" id="countdown" size="2" value="140"> characters left.</p>
 				</div>
+				    <!-- button -->
 		            <div><input id="submitButton" type="button" class="chatButton" value="Chatter" id="submitButton"></div>
 		</div>
-	<!-- Channel script -->
-		<script type="text/javascript" src="/scripts/channel.js"></script>
 	<!-- Other script -->	
     	<script type="text/javascript" src="/scripts/script.js"></script>
 </body>
