@@ -4,7 +4,11 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
-handlers:
+handlers:  
+- url: /favicon\.ico
+  static_files: images/favicon.ico
+  upload: images/favicon\.ico
+  
 - url: /stylesheets
   static_dir: stylesheets
 
@@ -13,10 +17,6 @@ handlers:
   
 - url: /scripts
   static_dir: scripts
-  
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: /favicon\.ico
 
 - url: /.*
   script: chatter.app
