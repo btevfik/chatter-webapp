@@ -1,7 +1,7 @@
-Chatterv1 - web: http://chatter-now.appspot.com
+Chatter
 ==============
 
-A chat app with Google App Engine
+A chat app with Google App Engine - web: http://chatter-now.appspot.com
 
 **Version 1.2 (Feb 19 2013)**
 
