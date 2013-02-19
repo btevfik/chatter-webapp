@@ -10,6 +10,7 @@
 	<script>
 	
 	  var me = '{{me}}';
+	  var my_id = '{{my_id}}';
 
 	  sendChat = function (){
 		 var input = document.getElementById('messageBox').value;
@@ -34,8 +35,9 @@
 		var a = JSON.parse(String(m.data));
 		var user = a.user;
 		var message = a.message;
+		var user_id = a.my_id;
 		$(document).ready(function(){
-		   if(me==user){
+		   if(user_id===my_id){
 		     $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
 		    }
 		   else{
@@ -80,22 +82,19 @@
               var message = "{{greeting.content|escape}}";
              if(author === me){
               $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
-		         }
-		   else{		
-		    $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+author+':</b></span><span class="message"><br>'+message+'</span></p>');
+		       }
+		     else{		
+		     $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+author+':</b></span><span class="message"><br>'+message+'</span></p>');
                }
             </script>
 		    <script type="text/javascript">
-		//$(document).ready(function(){
-		  //  $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+'Sneaky Fellow'+':</b></span><span class="message"><br>'+message+'</span></p>');
-		//});   
 		</script>
 			{% endfor %}
 
 		<div class="chatter" id="ChatterDiv">
 				<div>
 					<input id="messageBox" class="inputBox" type="text" onKeyDown="limitText(140);" 
-					onKeyUp="limitText(140);" maxlength="140" onkeypress="if(event.keyCode==13) {sendChat();}"><br>
+					onKeyUp="limitText(140);" maxlength="140"><br>
 					<p class="count">You have <input readonly type="text" id="countdown" size="2" value="140"> characters left.</p>
 				</div>
 		            <div><input id="submitButton" type="button" class="chatButton" value="Chatter" id="submitButton"></div>

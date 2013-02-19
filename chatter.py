@@ -17,7 +17,6 @@ import uuid
 
 jinja_environment = jinja2.Environment(
                                        loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-token = 0
 
 class Greeting(db.Model):
     """Models an individual Guestbook entry with an author, content, date and ip address"""
@@ -39,7 +38,6 @@ def connects_key(connects_name=None):
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        global token
 
         guestbook_name=self.request.get('guestbook_name')
         greetings_query = Greeting.all().ancestor(
@@ -62,14 +60,19 @@ class MainPage(webapp2.RequestHandler):
         if user:
             token = channel.create_channel(user.user_id())
             nickname = user.nickname()
+            my_id = user.user_id()
         else:
-            token = channel.create_channel(str(uuid.uuid4()))
+            my_id = str(uuid.uuid4()).replace("-",'')
+            token = channel.create_channel(my_id)
             nickname = "Anonymous"
 
+        self.response.headers.add_header( 
+                         'Set-Cookie', 'user_id='+my_id+'; expires=31-Dec-2020 23:59:59 GMT') 
         
         template_values = {
             'token' : token,
             'me': nickname,
+            'my_id': my_id, 
             'greetings': greetings,
             'url': url,
             'url_linktext': url_linktext,
@@ -81,7 +84,6 @@ class MainPage(webapp2.RequestHandler):
 class Message (webapp2.RequestHandler):
     
     def post(self):
-       global token
        # Store the chat into database so that it can be loaded back when the page is opened again.
        guestbook_name = self.request.get('guestbook_name')
        greeting = Greeting(parent=guestbook_key(guestbook_name))
@@ -94,12 +96,13 @@ class Message (webapp2.RequestHandler):
        
        if users.get_current_user():
          greeting.author = users.get_current_user().nickname()
+       else: 
+         greeting.author = "Anonymous"
                  
        message = self.request.get('chat')
        greeting.content = message
 
        ip = self.request.remote_addr
-       logging.info("IP:"+ip)
        greeting.ip_address=ip
              
        if len(message) != 0:
@@ -107,19 +110,21 @@ class Message (webapp2.RequestHandler):
        
        if users.get_current_user():
           nickname = users.get_current_user().nickname()
+          my_id = users.get_current_user().user_id()
        else:
           nickname = "Anonymous"
-
-       # Send retrieved chat, back to the client
+          my_id = self.request.cookies.get('user_id')
+       
+       # Send retrieved chat, back to all clients
        if len(message) != 0:
-          push = {'message': message, 'user' : nickname }
+          push = {'message': message, 'user' : nickname, 'my_id' : my_id }
           sendMessage = simplejson.dumps(push)
           for user in connects:
-             logging.info(user.id)
-             channel.send_message(user.id, sendMessage)
+               channel.send_message(user.id, sendMessage)
 
 class OpenedPage(webapp2.RequestHandler):
     def post(self):
+	
        connects_name = self.request.get('connects_name')
        connects_query = ConnectedUser.all().ancestor(connects_key(connects_name))
        connects = connects_query.run()
@@ -127,8 +132,11 @@ class OpenedPage(webapp2.RequestHandler):
 
        user = db.GqlQuery("SELECT * FROM ConnectedUser") 
    
-       new_user.id = users.get_current_user().user_id()
-       
+       if(users.get_current_user()):
+           new_user.id = users.get_current_user().user_id()
+       else:
+           new_user.id = self.request.cookies.get('user_id')
+
        if connects_query.count() == 0:
           new_user.put()
        

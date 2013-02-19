@@ -130,12 +130,13 @@ a:hover{
 	font-size:10px;
 }
 
-/* Chatter Button style from "http://www.cssbuttongenerator.com" 
+/* Chatter Button from "http://www.cssbuttongenerator.com" modified with the help of http://css-tricks.com
 ----------------------------------------------------------------------------------------------------------------------------- */
 .chatButton {
-	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	cursor: pointer;
+	-moz-box-shadow:1px 0px 1px #888,0px 1px 1px #424242,2px 1px 1px #000,1px 2px 1px #888,3px 2px 1px #000,2px 3px 1px #888,4px 3px 1px #000,3px 4px 1px #888,5px 4px 1px #000,4px 5px 1px #888,6px 5px 1px #000;
+	-webkit-box-shadow:1px 0px 1px #888,0px 1px 1px #888,2px 1px 1px #000,1px 2px 1px #888,3px 2px 1px #000,2px 3px 1px #888,4px 3px 1px #000,3px 4px 1px #888,5px 4px 1px #000,4px 5px 1px #888,6px 5px 1px #000;
+	box-shadow:1px 0px 1px #424242,0px 1px 1px #888,2px 1px 1px #424242,1px 2px 1px #888,3px 2px 1px #424242,2px 3px 1px #888,4px 3px 1px #424242,3px 4px 1px #888,5px 4px 1px #424242,4px 5px 1px #888,6px 5px 1px #424242;
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
 	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
@@ -143,7 +144,7 @@ a:hover{
 	-moz-border-radius:8px;
 	-webkit-border-radius:8px;
 	border-radius:8px;
-	border:1px solid #3b5999;
+	border:1px solid #888;
 	display:inline-block;
 	color:#3b5999;
 	font-family:Courier New;
@@ -159,7 +160,16 @@ a:hover{
 	background-color:#dfdfdf;
 }.chatButton:active {
 	position:relative;
-	top:1px;
+	box-shadow:none;
+	left:6px;
+	top:5px;
+}
+/* next is for pressing enter instead of clicking the button */
+.chatButton.activate{
+	position:relative;
+	box-shadow:none;
+	left:6px;
+	top:5px;
 }
 
 /*Pure CSS Speech Bubble from "http://nicolasgallagher.com/pure-css-speech-bubbles" */
