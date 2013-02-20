@@ -38,6 +38,9 @@
 
       //If a message is received from the server
 	  onMessage = function(m) {
+		//play pop sound when new message arrives (file from:freesound.org)
+		var pop = new Audio("/sounds/pop.wav");
+        pop.play();
 		//Parse the message
 		var a = JSON.parse(String(m.data));
 		var user = a.user;
