@@ -46,15 +46,23 @@
 		$(document).ready(function(){
 		   //If this is my message, display it with green right bubble
 		   if(user_id===my_id){
-		     $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
-		    }
+			 var new_bubble = $('<p class="triangle-isosceles right bubble moveRight" id="bubbleBox"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>').hide();
+		    } 
 		   //if someone else's message than display as orange left bubble
 		   else{
-		     $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+user+':</b></span><span class="message"><br>'+message+'</span></p>');
+		     var new_bubble = $('<p class="triangle-isosceles left bubble"><span class="person"><b>'+user+':</b></span><span class="message"><br>'+message+'</span></p>').hide();
 		   }
-		});
+		  //append the new bubble to the container before bottom
+		  $("#Bottom").before(new_bubble);
+		  //animate the bubble and scroll down
+		  $(new_bubble).animate({"height":"toggle", "padding-top":"toggle","padding-bottom":"toggle"}, 
+    { duration: 800,
+      step: function(now, fx) {                
+               $("#outputBox").scrollTop(10000000);
+            }});
+		}); 
 		//call this function to perform after load tasks (look at script.js)
-		afterLoad();
+	    afterLoad();
 	  }
 	
 	  //Open a channel using the token injected into client from the server
@@ -94,6 +102,7 @@
 	
 	    <!-- the container that holds chat -->
 		<div class="output" id="outputBox">
+		  <div id="Bottom"></div>
 		</div>
 		    <!-- load the old chat history from database -->
 			{% for greeting in greetings %}
@@ -103,11 +112,11 @@
               var author_id = "{{ greeting.id }}";
              //if this is my message display as green
              if(author_id === my_id){
-              $("#outputBox").append('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
+              $("#Bottom").before('<p class="triangle-isosceles right bubble moveRight"><span class="person"><b>You:</b></span><span class="message"><br>'+message+'</span></p>');
 		       }
 		     //if someone else's display as orange
 		     else{		
-		     $("#outputBox").append('<p class="triangle-isosceles left bubble"><span class="person"><b>'+author+':</b></span><span class="message"><br>'+message+'</span></p>');
+		     $("#Bottom").before('<p class="triangle-isosceles left bubble"><span class="person"><b>'+author+':</b></span><span class="message"><br>'+message+'</span></p>');
                }
             </script>
 		    <script type="text/javascript">

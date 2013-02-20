@@ -8,6 +8,7 @@ body {
 	font-family: Verdana, Helvetica, sans-serif;
 	background: url('../images/background.jpg');
 }
+
 /* Output that contains the chat 
 ----------------------------------------------------------------------------------------------------------------------------- */
 .output{
@@ -78,6 +79,7 @@ a:visited{
 a:hover{
 	color:#3B5999;
 }
+
 /* Container for speech bubble 
 ----------------------------------------------------------------------------------------------------------------------------- */
 .bubble{
@@ -94,6 +96,7 @@ a:hover{
     -webkit-transform:translate(180px,0px); /* Safari and Chrome */
     -o-transform:translate(180px,0px); /* Opera */
 }
+
 /* Message in the speech bubble 
 ----------------------------------------------------------------------------------------------------------------------------- */
 .message{
