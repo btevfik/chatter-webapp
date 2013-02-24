@@ -15,6 +15,7 @@ from google.appengine.api import channel
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 import uuid
+import hashlib
 
 jinja_environment = jinja2.Environment(
                                        loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -65,9 +66,11 @@ class MainPage(webapp2.RequestHandler):
         #if the user is logged in
         if user:
             #create a token, get nickname and id
-            token = channel.create_channel(user.user_id())
+            userID = user.user_id()
+            salt = 'thisIsaVeryLongSaltThatWillBeUsedToSalt'
+            my_id = hashlib.sha1('%s$%s' % (userID, salt)).hexdigest()
+            token = channel.create_channel(my_id)
             nickname = user.nickname()
-            my_id = user.user_id()
         #if the user is not logged in (anonymous)
         else:
             #if the anonymous user has been around before and has an id stored in cookie
@@ -111,7 +114,10 @@ class Message (webapp2.RequestHandler):
        
        if users.get_current_user():
          greeting.author = users.get_current_user().nickname()
-         greeting.id = users.get_current_user().user_id();
+         userID = users.get_current_user().user_id()
+         salt = 'thisIsaVeryLongSaltThatWillBeUsedToSalt'
+         logged_user_id =  hashlib.sha1('%s$%s' % (userID, salt)).hexdigest()
+         greeting.id = logged_user_id
        else: 
          greeting.author = "Anonymous"
          greeting.id = self.request.cookies.get('user_id')
@@ -130,7 +136,7 @@ class Message (webapp2.RequestHandler):
        # Send the received message to all users stored in connected users database
        if users.get_current_user():
           nickname = users.get_current_user().nickname()
-          my_id = users.get_current_user().user_id()
+          my_id = logged_user_id
        else:
           nickname = "Anonymous"
           my_id = self.request.cookies.get('user_id')
@@ -154,7 +160,9 @@ class OpenedPage(webapp2.RequestHandler):
    
        # if there the user is logged in
        if(users.get_current_user()):
-           new_user.id = users.get_current_user().user_id()
+           userID = users.get_current_user().user_id()
+           salt = 'thisIsaVeryLongSaltThatWillBeUsedToSalt'
+           new_user.id = hashlib.sha1('%s$%s' % (userID, salt)).hexdigest() 
        #if the user is anonymous then the id is stored in a cookie when MainPage is called, retreive that
        else:
            new_user.id = self.request.cookies.get('user_id')

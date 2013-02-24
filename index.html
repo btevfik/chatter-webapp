@@ -61,7 +61,7 @@
 		  $(new_bubble).animate({"height":"toggle", "padding-top":"toggle","padding-bottom":"toggle"}, 
     { duration: 800,
       step: function(now, fx) {                
-               $("#outputBox").scrollTop(10000000);
+               $("#outputBox").scrollTop(10000000); //not an elegant way but works
             }});
 		}); 
 		//call this function to perform after load tasks (look at script.js)
