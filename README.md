@@ -3,7 +3,7 @@ Chatter
 
 A chat app with Google App Engine - web: http://chatter-now.appspot.com
 
-**Version 1.2.1 (Feb 24 2013)**
+**Update 1.2.1 (Feb 24 2013)**
 
 -logged in user id's are hashed and salted
 
